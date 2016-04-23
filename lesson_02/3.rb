@@ -5,3 +5,5 @@ while fibo.last < 100 do
 end
 
 fibo.pop
+
+puts fibo
