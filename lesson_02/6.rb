@@ -12,12 +12,7 @@ while true do
   puts "Количество купленного товара:"
   quantity = gets.chomp.to_f
 
-  if products.include? title
-    products[title][:price] += price
-    products[title][:quantity] += quantity
-  else
-    products[title] = { price: price, quantity: quantity }
-  end
+  products[title] = { price: price, quantity: quantity }
 end
 
 total = 0
