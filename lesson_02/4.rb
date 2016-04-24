@@ -1,1 +1,9 @@
-letters = { a: 1, e: 5, i: 9, o: 15, u: 21, y: 25 }
+alphabet = ('a'..'z').to_a
+
+hash = {}
+
+'aeiouy'.split('').each do |letter|
+  hash[letter] = alphabet.index(letter) + 1
+end
+
+puts hash

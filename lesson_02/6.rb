@@ -1,6 +1,6 @@
 products = {}
 
-while true do
+loop do
   puts "Название товара:"
   title = gets.chomp
 
