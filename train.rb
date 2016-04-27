@@ -46,26 +46,33 @@ class Train
     @current_station += @direction
   end
 
-  def nearest_stations
-    puts "Previous staion:"
+  def previous_station
     if @direction == 1 && @current_station == 0
-      puts "#{@marshrut.stations[1]}"
+      return "#{@marshrut.stations[1]}"
     elsif @direction == -1 && @current_station == @marshrut.stations.length - 1
-      puts "#{@marshrut.stations[-2]}"
+      return "#{@marshrut.stations[-2]}"
     else
-      puts "#{@marshrut.stations[@current_station]}"
+      return "#{@marshrut.stations[@current_station]}"
     end
+  end
 
-    puts "Current station:"
-    puts "#{@marshrut.stations[@current_station]}"
+  def current_station
+    "#{@marshrut.stations[@current_station]}"
+  end
 
-    puts "Next station:"
+  def next_station
     if @direction == 1 && @current_station == @marshrut.stations.length - 1
-      puts "#{@marshrut.stations[-2]}"
+      return "#{@marshrut.stations[-2]}"
     elsif @direction == -1 && @current_station == 0
-      puts "#{@marshrut.stations[1]}"
+      return "#{@marshrut.stations[1]}"
     else
-      puts "#{@marshrut.stations[@current_station + 1]}"
+      return "#{@marshrut.stations[@current_station + 1]}"
     end
+  end
+
+  def nearest_stations
+    puts "Previous station: #{previous_station}"
+    puts "Current station: #{current_station}"
+    puts "Next station: #{next_station}"
   end
 end
