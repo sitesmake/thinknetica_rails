@@ -1,5 +1,10 @@
 class Train
+  #поезд создается только через наследуемые классы
+  private_class_method :new
+
   TYPE = [:cargo, :passenger]
+
+  @@trains = []
 
   attr_reader :speed
   attr_reader :vagons
@@ -7,13 +12,26 @@ class Train
   attr_reader :type
   attr_reader :direction
   attr_reader :vagons
+  attr_reader :title
 
   def initialize(title, type, vagons)
+
     @title = title
     @type = type
-    @vagons = vagons
-    @direction = 1
+
     @speed = 0
+    @direction = 1
+
+    @vagons = []
+    add_vagons(vagons)
+
+    @@trains << self
+
+    puts "* * * Created '#{@title}' #{@type} train with #{vagons} vagons * * *"
+  end
+
+  def self.all
+    @@trains
   end
 
   def accelerate
@@ -25,16 +43,17 @@ class Train
   end
 
   def add_vagon
-    @vagons += 1 if speed == 0
+    add_vagons(1)
   end
 
   def remove_vagon
-    @vagons -= 1 if speed == 0 && vagons > 0
+    remove_vagons(1)
   end
 
   def set_marshrut(obj)
     @marshrut = obj
     @current_station = 0
+    puts "* * * Поезду '#{title}' задан новый маршрут #{obj} * * *"
   end
 
   def get_next_station
@@ -57,7 +76,23 @@ class Train
   end
 
   def current_station
-    "#{@marshrut.stations[@current_station]}"
+    @marshrut.stations[@current_station]
+  end
+
+  def move_to_station(station)
+    if @marshrut && @marshrut.stations.include?(station)
+      @current_station = @marshrut.stations.index(station)
+      puts "* * * Поезд '#{title}' размещен на станции #{current_station} * * *"
+      self
+    elsif @marshrut.nil?
+      new_marshrut = Marshrut.new(station, station)
+      set_marshrut(new_marshrut)
+      puts "* * * Поезд '#{title}' размещен на станции #{current_station} * * *"
+      self
+    else
+      puts "! ! ! Станция не входит в список маршрутов ! ! !"
+      nil
+    end
   end
 
   def next_station
@@ -75,4 +110,27 @@ class Train
     puts "Current station: #{current_station}"
     puts "Next station: #{next_station}"
   end
+
+  def add_vagons(quantity)
+    new_vagons = []
+    if speed == 0
+      quantity.times do
+        new_vagons << Vagon.new(@type)
+      end
+      @vagons << new_vagons
+      puts "* * * Добавлено #{quantity} вагонов * * *"
+      new_vagons
+    end
+  end
+
+  def remove_vagons(quantity)
+    if speed == 0 && vagons.size >= quantity
+      quantity.times do
+        removed << @vagons.pop
+      end
+      puts "* * * Удалено #{quantity} вагонов * * *"
+      removed
+    end
+  end
+
 end

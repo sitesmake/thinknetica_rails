@@ -2,12 +2,22 @@ class Station
   attr_accessor :trains
   attr_accessor :title
 
+  @@stations = []
+
   def to_s
     title
   end
 
   def initialize(title)
     @title = title
+
+    @@stations << self
+
+    puts "* * * Created '#{title}' station * * *"
+  end
+
+  def self.all
+    @@stations
   end
 
   def show_trains(type = nil)

@@ -1,5 +1,9 @@
-class Route
+class Marshrut
   attr_reader :stations
+
+  def to_s
+    puts "#{stations.first}...#{stations.last}"
+  end
 
   def initialize(start, finish)
     @stations = [start, finish]
