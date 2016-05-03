@@ -1,7 +1,4 @@
 class Train
-  #поезд создается только через наследуемые классы
-  private_class_method :new
-
   TYPE = [:cargo, :passenger]
 
   @@trains = []
@@ -15,6 +12,7 @@ class Train
   attr_reader :title
 
   def initialize(title, type, vagons)
+    raise "! ! ! Unsupported train type ! ! !" unless TYPE.include?(type)
 
     @title = title
     @type = type
@@ -23,7 +21,7 @@ class Train
     @direction = 1
 
     @vagons = []
-    add_vagons(vagons)
+    add_vagons(vagons, @type)
 
     @@trains << self
 
@@ -42,12 +40,12 @@ class Train
     @speed = 0
   end
 
-  def add_vagon
-    add_vagons(1)
+  def add_vagon(type)
+    add_vagons(1, type)
   end
 
-  def remove_vagon
-    remove_vagons(1)
+  def remove_vagon(type)
+    remove_vagons(1, type)
   end
 
   def set_marshrut(obj)
@@ -111,26 +109,36 @@ class Train
     puts "Next station: #{next_station}"
   end
 
-  def add_vagons(quantity)
-    new_vagons = []
-    if speed == 0
+  def add_vagons(quantity, type)
+    if speed == 0 && @type == type
+      new_vagons = []
       quantity.times do
-        new_vagons << Vagon.new(@type)
+        @vagons << new_vagon(type)
       end
-      @vagons << new_vagons
       puts "* * * Добавлено #{quantity} вагонов * * *"
-      new_vagons
+      @vagons
+    else
+      puts "! ! ! Добавление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
+      puts "! ! ! Тип вагона #{type} не соответствует типу поезда #{@type} ! ! !" unless type == @type
+      false
     end
   end
 
-  def remove_vagons(quantity)
+  def remove_vagons(quantity, type)
     if speed == 0 && vagons.size >= quantity
       quantity.times do
         removed << @vagons.pop
       end
       puts "* * * Удалено #{quantity} вагонов * * *"
       removed
+    else
+      puts "! ! ! Отцепление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
+      puts "! ! ! Количество удаляемых вагонов больше имеющегося ! ! !" unless vagons.size >= quantity
+      false
     end
   end
 
+  def new_vagon(type)
+    Object.const_get(type.capitalize.to_s + "Vagon").new
+  end
 end

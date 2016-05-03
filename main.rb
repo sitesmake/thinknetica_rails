@@ -1,10 +1,10 @@
 require 'pry'
 require_relative 'train'
-require_relative 'cargo_train'
-require_relative 'passenger_train'
 require_relative 'station'
 require_relative 'marshrut'
 require_relative 'vagon'
+require_relative 'cargo_vagon'
+require_relative 'passenger_vagon'
 
 class Interface
 	def start
@@ -49,8 +49,8 @@ class Interface
 	private
 
 	def load_initial_data
-		train1 = CargoTrain.new('poezd-cargo', 20)
-		train2 = PassengerTrain.new('poezd-passenger', 10)
+		train1 = Train.new('poezd-cargo', :cargo, 20)
+		train2 = Train.new('poezd-passenger', :passenger, 10)
 
 		station1 = Station.new('adler')
 		station2 = Station.new('sochi')
@@ -64,6 +64,7 @@ class Interface
 
 		train1.set_marshrut(marshrut1)
 		train2.set_marshrut(marshrut1)
+
 	end
 
 	def create_station
@@ -71,15 +72,17 @@ class Interface
 	end
 
 	def create_train
-		Object.const_get(get_train_type.capitalize.to_s + "Train").new(get_train_title, get_train_vagons)
+		Train.new(get_train_title, get_train_type, get_train_vagons)
 	end
 
 	def add_vagon
-		select_train.add_vagon
+		train = select_train
+		train.add_vagon(train.type)
 	end
 
 	def remove_vagon
-		select_train.remove_vagon
+		train = select_train
+		train.remove_vagon(train.type)
 	end
 
 	def place_train_to_station
