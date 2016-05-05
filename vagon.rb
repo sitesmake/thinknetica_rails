@@ -1,11 +1,15 @@
 class Vagon
-  TYPE = Train::TYPE
+  @@vagons = []
 
-	attr_reader :type
+  def initialize
+    @@vagons << self
+  end
 
-	def initialize(type)
-    raise "! ! ! Unsupported vagon type ! ! !" unless TYPE.include?(type)
+  def self.all
+    @@vagons
+  end
 
-		@type = type
-	end
+  def type
+    self.class.to_s.split('Vagon')[0].downcase.to_sym
+  end
 end

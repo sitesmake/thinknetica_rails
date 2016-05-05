@@ -11,7 +11,7 @@ class Train
   attr_reader :vagons
   attr_reader :title
 
-  def initialize(title, type, vagons)
+  def initialize(title, type)
     raise "! ! ! Unsupported train type ! ! !" unless TYPE.include?(type)
 
     @title = title
@@ -21,13 +21,10 @@ class Train
     @direction = 1
 
     @vagons = []
-    vagons.times do
-      add_vagon(Vagon.new(type))
-    end
 
     @@trains << self
 
-    puts "* * * Created '#{@title}' #{@type} train with #{vagons} vagons * * *"
+    puts "* * * Created '#{@title}' #{@type} train * * *"
   end
 
   def self.all
@@ -103,14 +100,15 @@ class Train
     puts "Next station: #{next_station}"
   end
 
-  def add_vagon(object)
-    if speed == 0 && object.type == type
-      @vagons << object
-      puts "* * * Вагон #{object} добавлен к поезду #{self} * * *"
+  def add_vagon(vagon)
+    if speed == 0 && vagon.type == type && !priceplennye_vagony.include?(vagon)
+      @vagons << vagon
+      puts "* * * Вагон #{vagon} добавлен к поезду #{self} * * *"
       self
     else
       puts "! ! ! Добавление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
-      puts "! ! ! Тип вагона #{object.type} не соответствует типу поезда #{type} ! ! !" unless object.type == type
+      puts "! ! ! Тип вагона #{vagon.type} не соответствует типу поезда #{type} ! ! !" unless vagon.type == type
+      puts "! ! ! Вагон #{vagon} уже прицеплен. Сначала отцепите. ! ! !" if priceplennye_vagony.include?(vagon)
       false
     end
   end
@@ -127,7 +125,14 @@ class Train
     end
   end
 
-  # def new_vagon(type)
-  #   Object.const_get(type.capitalize.to_s + "Vagon").new
-  # end
+  def priceplennye_vagony
+    priceplennye_vagony = []
+    Train.all.each do |train|
+      train.vagons.each do |vagon|
+        priceplennye_vagony << vagon
+      end
+    end
+    priceplennye_vagony
+  end
+
 end

@@ -49,8 +49,8 @@ class Interface
 	private
 
 	def load_initial_data
-		train1 = Train.new('poezd-cargo', :cargo, 20)
-		train2 = Train.new('poezd-passenger', :passenger, 10)
+		train1 = Train.new('poezd-cargo', :cargo)
+		train2 = Train.new('poezd-passenger', :passenger)
 
 		station1 = Station.new('adler')
 		station2 = Station.new('sochi')
@@ -65,6 +65,16 @@ class Interface
 		train1.set_marshrut(marshrut1)
 		train2.set_marshrut(marshrut1)
 
+		5.times do
+			vagon1 = CargoVagon.new
+			train1.add_vagon(vagon1)
+		end
+
+		10.times do
+			vagon2 = PassengerVagon.new
+			train2.add_vagon(vagon2)
+		end
+
 	end
 
 	def create_station
@@ -72,17 +82,22 @@ class Interface
 	end
 
 	def create_train
-		Train.new(get_train_title, get_train_type, get_train_vagons)
+		Train.new(get_train_title, get_train_type)
 	end
+
+	def new_vagon(type)
+    Object.const_get(type.capitalize.to_s + "Vagon").new
+  end
 
 	def add_vagon
 		train = select_train
-		train.add_vagon(train.type)
+		vagon = new_vagon(train.type)
+		train.add_vagon(vagon)
 	end
 
 	def remove_vagon
 		train = select_train
-		train.remove_vagon(train.type)
+		train.remove_vagon
 	end
 
 	def place_train_to_station
