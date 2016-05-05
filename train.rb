@@ -21,7 +21,9 @@ class Train
     @direction = 1
 
     @vagons = []
-    add_vagons(vagons, @type)
+    vagons.times do
+      add_vagon(Vagon.new(type))
+    end
 
     @@trains << self
 
@@ -38,14 +40,6 @@ class Train
 
   def brake
     @speed = 0
-  end
-
-  def add_vagon(type)
-    add_vagons(1, type)
-  end
-
-  def remove_vagon(type)
-    remove_vagons(1, type)
   end
 
   def set_marshrut(obj)
@@ -109,36 +103,31 @@ class Train
     puts "Next station: #{next_station}"
   end
 
-  def add_vagons(quantity, type)
-    if speed == 0 && @type == type
-      new_vagons = []
-      quantity.times do
-        @vagons << new_vagon(type)
-      end
-      puts "* * * Добавлено #{quantity} вагонов * * *"
-      @vagons
+  def add_vagon(object)
+    if speed == 0 && object.type == type
+      @vagons << object
+      puts "* * * Вагон #{object} добавлен к поезду #{self} * * *"
+      self
     else
       puts "! ! ! Добавление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
-      puts "! ! ! Тип вагона #{type} не соответствует типу поезда #{@type} ! ! !" unless type == @type
+      puts "! ! ! Тип вагона #{object.type} не соответствует типу поезда #{type} ! ! !" unless object.type == type
       false
     end
   end
 
-  def remove_vagons(quantity, type)
-    if speed == 0 && vagons.size >= quantity
-      quantity.times do
-        removed << @vagons.pop
-      end
-      puts "* * * Удалено #{quantity} вагонов * * *"
+  def remove_vagon
+    if speed == 0 && vagons.size >= 1
+      removed = @vagons.pop
+      puts "* * * Из поезда #{self} удален вагон #{removed} * * *"
       removed
     else
       puts "! ! ! Отцепление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
-      puts "! ! ! Количество удаляемых вагонов больше имеющегося ! ! !" unless vagons.size >= quantity
+      puts "! ! ! Вагоны отсутствуют ! ! !" unless vagons.size == 0
       false
     end
   end
 
-  def new_vagon(type)
-    Object.const_get(type.capitalize.to_s + "Vagon").new
-  end
+  # def new_vagon(type)
+  #   Object.const_get(type.capitalize.to_s + "Vagon").new
+  # end
 end
