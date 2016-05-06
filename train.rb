@@ -101,14 +101,14 @@ class Train
   end
 
   def add_vagon(vagon)
-    if speed == 0 && vagon.type == type && !priceplennye_vagony.include?(vagon)
+    if speed == 0 && vagon.type == type && !attached_vagons.include?(vagon)
       @vagons << vagon
       puts "* * * Вагон #{vagon} добавлен к поезду #{self} * * *"
       self
     else
       puts "! ! ! Добавление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
       puts "! ! ! Тип вагона #{vagon.type} не соответствует типу поезда #{type} ! ! !" unless vagon.type == type
-      puts "! ! ! Вагон #{vagon} уже прицеплен. Сначала отцепите. ! ! !" if priceplennye_vagony.include?(vagon)
+      puts "! ! ! Вагон #{vagon} уже прицеплен. Сначала отцепите. ! ! !" if attached_vagons.include?(vagon)
       false
     end
   end
@@ -125,14 +125,14 @@ class Train
     end
   end
 
-  def priceplennye_vagony
-    priceplennye_vagony = []
+  def attached_vagons
+    attached_vagons = []
     Train.all.each do |train|
       train.vagons.each do |vagon|
-        priceplennye_vagony << vagon
+        attached_vagons << vagon
       end
     end
-    priceplennye_vagony
+    attached_vagons
   end
 
 end
