@@ -1,4 +1,6 @@
 class Train
+  include Manufacturer
+
   TYPE = [:cargo, :passenger]
 
   @@trains = []
@@ -10,8 +12,9 @@ class Train
   attr_reader :direction
   attr_reader :vagons
   attr_reader :title
+  attr_reader :number
 
-  def initialize(title, type)
+  def initialize(title, type, number = nil)
     raise "! ! ! Unsupported train type ! ! !" unless TYPE.include?(type)
 
     @title = title
@@ -24,11 +27,24 @@ class Train
 
     @@trains << self
 
+    @number = (number || Time.now.to_i).to_s
+
     puts "* * * Created '#{@title}' #{@type} train * * *"
   end
 
   def self.all
     @@trains
+  end
+
+  def self.find(number)
+    search = number.to_s
+
+    Train.all.each do |train|
+      return train if train.number == search
+    end
+
+    puts "! ! ! No train '#{search}' found ! ! !"
+    nil
   end
 
   def accelerate

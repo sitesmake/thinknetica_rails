@@ -1,4 +1,6 @@
 class Vagon
+  include Manufacturer
+
   @@vagons = []
 
   def initialize
