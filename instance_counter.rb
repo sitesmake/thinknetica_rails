@@ -1,18 +1,14 @@
 module InstanceCounter
-  # @@instances = []
-
   def self.included(base)
-    base.class_eval do
-      class_variable_set('@@instances', [])
-    end
-
     base.extend ClassMethods
     base.send :include, InstanceMethods
   end
 
   module ClassMethods
+    attr_accessor :instances
+
     def instances
-      @@instances.size
+      @instances ||= 0
     end
   end
 
@@ -20,7 +16,7 @@ module InstanceCounter
     protected
 
     def register_instance
-      @@instances << self
+      self.class.instances += 1
     end
   end
 end
