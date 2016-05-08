@@ -6,8 +6,7 @@ class Vagon
 
   def initialize
     @@vagons << self
-    # register_instance
-    @@instances << self
+    register_instance
   end
 
   def self.all
