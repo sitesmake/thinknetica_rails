@@ -1,5 +1,6 @@
 require 'pry'
 require_relative 'manufacturer'
+require_relative 'instance_counter'
 require_relative 'train'
 require_relative 'station'
 require_relative 'marshrut'

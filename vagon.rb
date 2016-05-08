@@ -1,10 +1,13 @@
 class Vagon
   include Manufacturer
+  include InstanceCounter
 
   @@vagons = []
 
   def initialize
     @@vagons << self
+    # register_instance
+    @@instances << self
   end
 
   def self.all
