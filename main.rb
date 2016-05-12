@@ -50,9 +50,15 @@ class Interface
 
 	private
 
+	def random_train_number
+		rtn = ""
+		5.times { rtn += (65 + rand(25)).chr }
+		rtn
+	end
+
 	def load_initial_data
-		train1 = Train.new('poezd-cargo', :cargo)
-		train2 = Train.new('poezd-passenger', :passenger)
+		train1 = Train.new('poezd-cargo', :cargo, random_train_number)
+		train2 = Train.new('poezd-passenger', :passenger, random_train_number)
 
 		station1 = Station.new('adler')
 		station2 = Station.new('sochi')
@@ -80,11 +86,21 @@ class Interface
 	end
 
 	def create_station
-		Station.new(get_station_title)
+		station = Station.new(get_station_title)
+	rescue => error
+		puts "! ! ! Error: #{error.message}"
+		retry
+	ensure
+		puts "Station #{station} successfully created!"
 	end
 
 	def create_train
-		Train.new(get_train_title, get_train_type)
+		train = Train.new(get_train_title, get_train_type, get_train_number)
+	rescue => error
+		puts "! ! ! Error: #{error.message}"
+		retry
+	ensure
+		puts "Train #{train} successfully created!"
 	end
 
 	def new_vagon(type)
@@ -141,6 +157,11 @@ class Interface
 
 	def get_train_title
 		puts "Title for train:"
+		gets.chomp
+	end
+
+	def get_train_number
+		puts "Number for train:"
 		gets.chomp
 	end
 

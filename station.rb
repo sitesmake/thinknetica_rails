@@ -11,14 +11,23 @@ class Station
   def initialize(title)
     @title = title
 
+    validate!
+
     @@stations << self
 
-    puts "* * * Created '#{title}' station * * *"
+    #puts "* * * Created '#{title}' station * * *"
   end
 
   def self.all
     @@stations
   end
+
+  def valid?
+    validate!
+  rescue
+    false
+  end
+
 
   def show_trains(type = nil)
     if type
@@ -35,4 +44,13 @@ class Station
       end
     end
   end
+
+  protected
+
+  def validate!
+    raise "Station must have a valid title" unless @title =~ /\S/
+    raise "Station title must be unique" if @@stations.any? { |s| s.title == @title }
+    true
+  end
+
 end

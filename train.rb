@@ -14,8 +14,7 @@ class Train
   attr_reader :title
   attr_reader :number
 
-  def initialize(title, type, number = nil)
-    raise "! ! ! Unsupported train type ! ! !" unless TYPE.include?(type)
+  def initialize(title, type, number)
 
     @title = title
     @type = type
@@ -25,15 +24,23 @@ class Train
 
     @vagons = []
 
+    @number = number
+
+    validate!
+
     @@trains << self
 
-    @number = (number || Time.now.to_i).to_s
-
-    puts "* * * Created '#{@title}' #{@type} train * * *"
+    #puts "* * * Created '#{@title}' #{@type} train * * *"
   end
 
   def self.all
     @@trains
+  end
+
+  def valid?
+    validate!
+  rescue
+    false
   end
 
   def self.find(number)
@@ -58,7 +65,7 @@ class Train
   def set_marshrut(obj)
     @marshrut = obj
     @current_station = 0
-    puts "* * * Поезду '#{title}' задан новый маршрут #{obj} * * *"
+    #puts "* * * Поезду '#{title}' задан новый маршрут #{obj} * * *"
   end
 
   def get_next_station
@@ -87,12 +94,12 @@ class Train
   def move_to_station(station)
     if @marshrut && @marshrut.stations.include?(station)
       @current_station = @marshrut.stations.index(station)
-      puts "* * * Поезд '#{title}' размещен на станции #{current_station} * * *"
+      #puts "* * * Поезд '#{title}' размещен на станции #{current_station} * * *"
       self
     elsif @marshrut.nil?
       new_marshrut = Marshrut.new(station, station)
       set_marshrut(new_marshrut)
-      puts "* * * Поезд '#{title}' размещен на станции #{current_station} * * *"
+      #puts "* * * Поезд '#{title}' размещен на станции #{current_station} * * *"
       self
     else
       puts "! ! ! Станция не входит в список маршрутов ! ! !"
@@ -119,12 +126,12 @@ class Train
   def add_vagon(vagon)
     if speed == 0 && vagon.type == type && !attached_vagons.include?(vagon)
       @vagons << vagon
-      puts "* * * Вагон #{vagon} добавлен к поезду #{self} * * *"
+      #puts "* * * Вагон #{vagon} добавлен к поезду #{self} * * *"
       self
     else
-      puts "! ! ! Добавление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
-      puts "! ! ! Тип вагона #{vagon.type} не соответствует типу поезда #{type} ! ! !" unless vagon.type == type
-      puts "! ! ! Вагон #{vagon} уже прицеплен. Сначала отцепите. ! ! !" if attached_vagons.include?(vagon)
+      #puts "! ! ! Добавление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
+      #puts "! ! ! Тип вагона #{vagon.type} не соответствует типу поезда #{type} ! ! !" unless vagon.type == type
+      #puts "! ! ! Вагон #{vagon} уже прицеплен. Сначала отцепите. ! ! !" if attached_vagons.include?(vagon)
       false
     end
   end
@@ -132,11 +139,11 @@ class Train
   def remove_vagon
     if speed == 0 && vagons.size >= 1
       removed = @vagons.pop
-      puts "* * * Из поезда #{self} удален вагон #{removed} * * *"
+      #puts "* * * Из поезда #{self} удален вагон #{removed} * * *"
       removed
     else
-      puts "! ! ! Отцепление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
-      puts "! ! ! Вагоны отсутствуют ! ! !" unless vagons.size == 0
+      #puts "! ! ! Отцепление вагонов в движущемся поезде невозможно ! ! !" unless speed == 0
+      #puts "! ! ! Вагоны отсутствуют ! ! !" unless vagons.size == 0
       false
     end
   end
@@ -149,6 +156,16 @@ class Train
       end
     end
     attached_vagons
+  end
+
+  protected
+
+  def validate!
+    raise "Train must have a valid title" unless @title =~ /\S/
+    raise "Unsupported train type" unless TYPE.include?(@type)
+    raise "Wrong number format (XXX[-]XX)" unless @number =~ /^[a-zа-я0-9]{3}-?[a-zа-я0-9]{2}$/i
+    raise "Train with number #{@number} already exists" if @@trains.any? { |t| t.number == @number }
+    true
   end
 
 end
