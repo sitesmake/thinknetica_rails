@@ -36,12 +36,18 @@ class Station
       puts "Trains on stations:"
     end
 
-    @trains.each do |train|
+    trains.each do |train|
       if type
         puts train.title if train.type == type
       else
         puts train.title
       end
+    end
+  end
+
+  def each_train
+    trains.each do |train|
+      yield(train) if block_given?
     end
   end
 

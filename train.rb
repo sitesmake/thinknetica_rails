@@ -43,6 +43,10 @@ class Train
     false
   end
 
+  def format
+    "#{number}/#{type}/#{vagons.size}"
+  end
+
   def self.find(number)
     search = number.to_s
 
@@ -126,6 +130,7 @@ class Train
   def add_vagon(vagon)
     if speed == 0 && vagon.type == type && !attached_vagons.include?(vagon)
       @vagons << vagon
+      vagon.number = @vagons.size
       #puts "* * * Вагон #{vagon} добавлен к поезду #{self} * * *"
       self
     else
@@ -139,6 +144,7 @@ class Train
   def remove_vagon
     if speed == 0 && vagons.size >= 1
       removed = @vagons.pop
+      removed.number = nil
       #puts "* * * Из поезда #{self} удален вагон #{removed} * * *"
       removed
     else
@@ -157,6 +163,13 @@ class Train
     end
     attached_vagons
   end
+
+  def each_vagon
+    vagons.each do |vagon|
+      yield(vagon) if block_given?
+    end
+  end
+
 
   protected
 
