@@ -1,35 +1,26 @@
 class CargoVagon < Vagon
-  attr_reader :volume
-  attr_reader :placed
-
-  def initialize(volume=1000)
-    @volume = volume.to_i
-    @placed = 0
-
-    validate!
-
-    super
-  end
 
   def place(volume)
-    if free_volume >= volume
-      self.placed += volume
+    if free_quota >= volume
+      self.used_quota += volume
     else
-      puts "sorry, not enough free volume"
+      puts "sorry, not enough free space"
       return false
     end
   end
 
   def free_volume
-    volume - placed
+    free_quota
+  end
+
+  def format
+    "number: #{number}/type: cargo/free: #{free_quota}/placed: #{used_quota}"
   end
 
   private
 
-  attr_writer :placed
-
   def validate!
-    raise "Volume must be positive number" unless @volume > 0
+    raise "Volume must be positive number" unless @quota > 0
     true
   end
 end
