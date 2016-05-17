@@ -1,22 +1,19 @@
 class PassengerVagon < Vagon
 
+  def not_enough_message
+    "Sorry, no more seats"
+  end
+
+  def validation_error_message
+    "Seats number must be positive number"
+  end
+
   def take_seat
-    if free_quota > 0
-      self.used_quota += 1
-    else
-      puts "Sorry, no more seats"
-      return false
-    end
+    add(1)
   end
 
   def format
     "number: #{number}/type: cargo/free: #{free_quota}/passengers: #{used_quota}"
   end
 
-  private
-
-  def validate!
-    raise "Seats number must be positive number" unless @quota > 0
-    true
-  end
 end

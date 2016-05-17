@@ -1,26 +1,19 @@
 class CargoVagon < Vagon
 
-  def place(volume)
-    if free_quota >= volume
-      self.used_quota += volume
-    else
-      puts "sorry, not enough free space"
-      return false
-    end
+  def not_enough_message
+    "Sorry, not enough free space"
   end
 
-  def free_volume
-    free_quota
+  def validation_error_message
+    "Volume must be positive number"
+  end
+
+  def place(amount)
+    add(amount)
   end
 
   def format
     "number: #{number}/type: cargo/free: #{free_quota}/placed: #{used_quota}"
   end
 
-  private
-
-  def validate!
-    raise "Volume must be positive number" unless @quota > 0
-    true
-  end
 end

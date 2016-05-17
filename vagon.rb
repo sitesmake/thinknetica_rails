@@ -34,4 +34,18 @@ class Vagon
 
   attr_writer :used_quota
 
+  def validate!
+    raise validation_error_message unless @quota > 0
+    true
+  end
+
+  def add(amount)
+    if free_quota >= amount
+      self.used_quota += amount
+    else
+      puts not_enough_message
+      return false
+    end
+  end
+
 end
