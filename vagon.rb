@@ -8,7 +8,7 @@ class Vagon
   attr_reader :quota
   attr_reader :used_quota
 
-  def initialize(quota=50)
+  def initialize(quota = 50)
     @quota = quota.to_i
     @used_quota = 0
 
@@ -47,5 +47,4 @@ class Vagon
       return false
     end
   end
-
 end

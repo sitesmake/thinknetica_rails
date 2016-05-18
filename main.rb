@@ -9,244 +9,241 @@ require_relative 'cargo_vagon'
 require_relative 'passenger_vagon'
 
 class Interface
-	def start
-		loop do
-			puts "create a (s)tation"
-			puts "create a (t)rain"
-			puts "(a)dd vagon to train"
-			puts "(r)emove vagon from train"
-			puts "(p)lace train to station"
-			puts "(pl)place passenger/cargo to vagon"
-			puts "---------"
-			puts "(v)iew stations list and trains on station"
-			puts "(lv)list vagons for train"
-			puts "---------"
-			puts "(l)oad initial data"
-			puts "(d)ebug"
-			puts "---------"
-			puts "e(x)it"
+  def start
+    loop do
+      puts 'create a (s)tation'
+      puts 'create a (t)rain'
+      puts '(a)dd vagon to train'
+      puts '(r)emove vagon from train'
+      puts '(p)lace train to station'
+      puts '(pl)place passenger/cargo to vagon'
+      puts '---------'
+      puts '(v)iew stations list and trains on station'
+      puts '(lv)list vagons for train'
+      puts '---------'
+      puts '(l)oad initial data'
+      puts '(d)ebug'
+      puts '---------'
+      puts 'e(x)it'
 
-			input = gets.chomp
+      input = gets.chomp
 
-			case input
-			when 's'
-				create_station
-			when 't'
-				create_train
-			when 'a'
-				add_vagon_to_train
-			when 'r'
-				remove_vagon
-			when 'p'
-				place_train_to_station
-			when 'pl'
-				place_to_vagon
-			when 'v'
-				view_stations_and_trains
-			when 'lv'
-				list_vagons_for_train
-			when 'l'
-				load_initial_data
-			when 'd'
-				binding.pry
-			when 'x'
-				break
-			end
-		end
-	end
-
-	private
-
-	def random_train_number
-		rtn = ""
-		5.times { rtn += (65 + rand(25)).chr }
-		rtn
-	end
-
-	def load_initial_data
-		train1 = Train.new('poezd-cargo', :cargo, random_train_number)
-		train2 = Train.new('poezd-passenger', :passenger, random_train_number)
-
-		station1 = Station.new('adler')
-		station2 = Station.new('sochi')
-		station3 = Station.new('dagomys')
-		station4 = Station.new('tuapse')
-
-		marshrut1 = Marshrut.new(station1, station4)
-
-		marshrut1.add_station(station2)
-		marshrut1.add_station(station3)
-
-		train1.set_marshrut(marshrut1)
-		train2.set_marshrut(marshrut1)
-
-		5.times do
-			vagon1 = CargoVagon.new
-			train1.add_vagon(vagon1)
-		end
-
-		10.times do
-			vagon2 = PassengerVagon.new
-			train2.add_vagon(vagon2)
-		end
-
-	end
-
-	def create_station
-		station = Station.new(get_station_title)
-	rescue => error
-		puts "! ! ! Error: #{error.message}"
-		retry
-	ensure
-		puts "Station #{station} successfully created!"
-	end
-
-	def create_train
-		train = Train.new(get_train_title, get_type, get_train_number)
-	rescue => error
-		puts "! ! ! Error: #{error.message}"
-		retry
-	ensure
-		puts "Train #{train} successfully created!"
-	end
-
-	def new_vagon(type)
-    quantity = get_quantity(type)
-    Object.const_get(type.capitalize.to_s + "Vagon").new(quantity)
+      case input
+      when 's'
+        create_station
+      when 't'
+        create_train
+      when 'a'
+        add_vagon_to_train
+      when 'r'
+        remove_vagon
+      when 'p'
+        place_train_to_station
+      when 'pl'
+        place_to_vagon
+      when 'v'
+        view_stations_and_trains
+      when 'lv'
+        list_vagons_for_train
+      when 'l'
+        load_initial_data
+      when 'd'
+      when 'x'
+        break
+      end
+    end
   end
 
-	def add_vagon_to_train
-		train = select_train
-		vagon = new_vagon(train.type)
-		train.add_vagon(vagon)
-	end
+  private
 
-	def add_vagon
-		new_vagon(get_type)
-	end
+  def random_train_number
+    rtn = ''
+    5.times { rtn += (65 + rand(25)).chr }
+    rtn
+  end
 
-	def get_quantity(type)
-		case type
-		when :cargo
-			puts "Volume:"
-			gets.chomp.to_i
-		when :passenger
-			puts "Seats:"
-			gets.chomp.to_i
-		end
-	end
+  def load_initial_data
+    train1 = Train.new(title: 'poezd-cargo', type: :cargo, number: random_train_number)
+    train2 = Train.new(title: 'poezd-passenger', type: :passenger, number: random_train_number)
 
-	def remove_vagon
-		train = select_train
-		train.remove_vagon
-	end
+    station1 = Station.new('adler')
+    station2 = Station.new('sochi')
+    station3 = Station.new('dagomys')
+    station4 = Station.new('tuapse')
 
-	def place_train_to_station
-		select_train.move_to_station(select_station)
-	end
+    marshrut1 = Marshrut.new(station1, station4)
 
-	def get_station_title
-		puts "Title for station:"
-		gets.chomp
-	end
+    marshrut1.add_station(station2)
+    marshrut1.add_station(station3)
 
-	def select_station
-		puts "Select station:"
+    train1.set_marshrut(marshrut1)
+    train2.set_marshrut(marshrut1)
 
-		index = -1
-		Station.all.each do |station|
-			index += 1
-			puts "(#{index}) #{station.title}"
-		end
+    5.times do
+      vagon1 = CargoVagon.new
+      train1.add_vagon(vagon1)
+    end
 
-		selected = gets.chomp.to_i
+    10.times do
+      vagon2 = PassengerVagon.new
+      train2.add_vagon(vagon2)
+    end
+  end
 
-		Station.all[selected]
-	end
+  def create_station
+    station = Station.new(get_station_title)
+  rescue => error
+    puts "! ! ! Error: #{error.message}"
+    retry
+  ensure
+    puts "Station #{station} successfully created!"
+  end
 
-	def get_type
-		puts "Select type:"
+  def create_train
+    train = Train.new(title: get_train_title, type: get_type, number: get_train_number)
+  rescue => error
+    puts "! ! ! Error: #{error.message}"
+    retry
+  ensure
+    puts "Train #{train} successfully created!"
+  end
 
-		index = -1
-		Train::TYPE.each do |type|
-			index += 1
-			puts "(#{index}) #{type}"
-		end
+  def new_vagon(type)
+    quantity = get_quantity(type)
+    Object.const_get(type.capitalize.to_s + 'Vagon').new(quantity)
+  end
 
-		selected = gets.chomp.to_i
+  def add_vagon_to_train
+    train = select_train
+    vagon = new_vagon(train.type)
+    train.add_vagon(vagon)
+  end
 
-		Train::TYPE[selected]
-	end
+  def add_vagon
+    new_vagon(get_type)
+  end
 
-	def get_train_title
-		puts "Title for train:"
-		gets.chomp
-	end
+  def get_quantity(type)
+    case type
+    when :cargo
+      puts 'Volume:'
+      gets.chomp.to_i
+    when :passenger
+      puts 'Seats:'
+      gets.chomp.to_i
+    end
+  end
 
-	def get_train_number
-		puts "Number for train:"
-		gets.chomp
-	end
+  def remove_vagon
+    train = select_train
+    train.remove_vagon
+  end
 
-	def get_train_vagons
-		puts "Number of vagons:"
-		gets.chomp.to_i
-	end
+  def place_train_to_station
+    select_train.move_to_station(select_station)
+  end
 
-	def select_train
-		puts "Select train:"
+  def get_station_title
+    puts 'Title for station:'
+    gets.chomp
+  end
 
-		index = -1
-		Train.all.each do |train|
-			index += 1
-			puts "(#{index}) #{train.title}"
-		end
+  def select_station
+    puts 'Select station:'
 
-		selected = gets.chomp.to_i
+    index = -1
+    Station.all.each do |station|
+      index += 1
+      puts "(#{index}) #{station.title}"
+    end
 
-		Train.all[selected]
-	end
+    selected = gets.chomp.to_i
 
-	def select_vagon
-		puts "Select vagon:"
+    Station.all[selected]
+  end
 
-		index = -1
-		Vagon.all.each do |vagon|
-			index += 1
-			puts "(#{index}) #{vagon.format}"
-		end
+  def get_type
+    puts 'Select type:'
 
-		selected = gets.chomp.to_i
+    index = -1
+    Train::TYPE.each do |type|
+      index += 1
+      puts "(#{index}) #{type}"
+    end
 
-		Vagon.all[selected]
-	end
+    selected = gets.chomp.to_i
 
-	def view_stations_and_trains
-		Station.all.each do |station|
-			puts "Station: #{station.title}"
-			puts "Trains:"
-			Train.all.each do |train|
-				if train.current_station == station
-					puts "#{train.format}"
+    Train::TYPE[selected]
+  end
 
-					train.vagons.each do |vagon|
-						puts "#{vagon.format}"
-					end
-				end
-			end
-		end
-	end
+  def get_train_title
+    puts 'Title for train:'
+    gets.chomp
+  end
 
-	def list_vagons_for_train
-		select_train.vagons.each do |vagon|
-			puts "#{vagon.format}"
-		end
-	end
+  def get_train_number
+    puts 'Number for train:'
+    gets.chomp
+  end
 
-	def place_to_vagon
-		vagon = select_vagon
-		vagon.place get_quantity(vagon.type)
-	end
+  def get_train_vagons
+    puts 'Number of vagons:'
+    gets.chomp.to_i
+  end
+
+  def select_train
+    puts 'Select train:'
+
+    index = -1
+    Train.all.each do |train|
+      index += 1
+      puts "(#{index}) #{train.title}"
+    end
+
+    selected = gets.chomp.to_i
+
+    Train.all[selected]
+  end
+
+  def select_vagon
+    puts 'Select vagon:'
+
+    index = -1
+    Vagon.all.each do |vagon|
+      index += 1
+      puts "(#{index}) #{vagon.format}"
+    end
+
+    selected = gets.chomp.to_i
+
+    Vagon.all[selected]
+  end
+
+  def view_stations_and_trains
+    Station.all.each do |station|
+      puts "Station: #{station.title}"
+      puts 'Trains:'
+      Train.all.each do |train|
+        next unless train.current_station == station
+        puts train.format.to_s
+
+        train.vagons.each do |vagon|
+          puts vagon.format.to_s
+        end
+      end
+    end
+  end
+
+  def list_vagons_for_train
+    select_train.vagons.each do |vagon|
+      puts vagon.format.to_s
+    end
+  end
+
+  def place_to_vagon
+    vagon = select_vagon
+    vagon.place get_quantity(vagon.type)
+  end
 end
 
 Interface.new.start

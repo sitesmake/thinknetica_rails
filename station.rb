@@ -15,7 +15,7 @@ class Station
 
     @@stations << self
 
-    #puts "* * * Created '#{title}' station * * *"
+    # puts "* * * Created '#{title}' station * * *"
   end
 
   def self.all
@@ -28,12 +28,11 @@ class Station
     false
   end
 
-
   def show_trains(type = nil)
     if type
       puts "#{Train::TYPE[type].capitalize} trains on station"
     else
-      puts "Trains on stations:"
+      puts 'Trains on stations:'
     end
 
     trains.each do |train|
@@ -54,9 +53,8 @@ class Station
   protected
 
   def validate!
-    raise "Station must have a valid title" unless @title =~ /\S/
-    raise "Station title must be unique" if @@stations.any? { |s| s.title == @title }
+    raise 'Station must have a valid title' unless @title =~ /\S/
+    raise 'Station title must be unique' if @@stations.any? { |s| s.title == @title }
     true
   end
-
 end

@@ -4,7 +4,7 @@ module FuelTank
   end
 
   def fuel_level
-    self.fuel_tank
+    fuel_tank
   end
 
   protected
@@ -23,16 +23,15 @@ class Car
   extend Debugger
 
   def initialize
-    self.class.debug "initialized"
+    self.class.debug 'initialized'
   end
 
   def show_protected
     puts '1'
-    puts self.fuel_tank
+    puts fuel_tank
     puts '2'
     puts fuel_tank
   end
-
 end
 
 class MotorBike

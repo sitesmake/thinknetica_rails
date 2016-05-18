@@ -30,7 +30,7 @@ class Marshrut
   end
 
   def list_stations
-    puts "Stations list"
+    puts 'Stations list'
     stations.each do |station|
       puts station
     end
@@ -39,7 +39,7 @@ class Marshrut
   protected
 
   def validate!
-    raise "All stations must be a Station" unless @stations.all? { |s| s.is_a? Station }
+    raise 'All stations must be a Station' unless @stations.all? { |s| s.is_a? Station }
     true
   end
 end
