@@ -1,60 +1,69 @@
 module Validation
-	define_method(:validate) { |name, type, params = nil|
-		register_validation(name, type, params)
-		return false unless check(name, type, params)
-		true
-	}
+  def self.included(base)
+    base.extend ClassMethods
+    base.send :include, InstanceMethods
+  end
 
-	def validate!
-		@registered_validations.each do |rv|
-			raise "Validation #{rv[0]} error" unless check(*rv)
-		end
-	end
+  module ClassMethods
+    def validate(name, type, *args)
+      @validations ||= {}
+      @validations[name] ||= []
+      @validations[name] << [type, *args]
+    end
 
-	def valid?
-		begin
-			@registered_validations.each do |rv|
-				raise "Validation #{rv[0]} error" unless check(*rv)
-			end
-			true
-		rescue
-			false
-		end
-	end
+    attr_reader :validations
+  end
 
-	private
+  module InstanceMethods
+    def validate!
+      self.class.validations.each do |attr, validations|
+        value = instance_variable_get("@#{attr}")
 
-	def register_validation(name, type, params)
-		@registered_validations ||= []
-		@registered_validations << [name, type, params]
-	end
+        validations.each do |valid|
+          send("validate_#{valid.first}", value, valid[1..-1])
+        end
+      end
+    end
 
-	def check(name, type, params = nil)
-		value = instance_variable_get("@#{name}")
+    def valid?
+      begin
+        validate!
+      rescue
+        false
+      end
+    end
 
-		if type == :presence
-			return false if (value.nil? || value.to_s.empty?)
-		elsif type == :number
-			return false if value !~ params
-		elsif type == :type
-			return false if value.class.to_s != params.to_s
-		end
+    protected
 
-		true
-	end
+    def validate_presence(value, *args)
+      raise "presence error" if (value.nil? || value.to_s.empty?)
+    end
+
+    def validate_format(value, *args)
+      return "format error" if value !~ args
+    end
+
+    def validate_type(value, *args)
+      return "type error" if value.class != args
+    end
+  end
 end
 
-class Test
-  extend Validation
 
-  attr_accessor :hello
 
-  @hello = 10
-  validate :hello, :type, Fixnum
+class Car
+  include Validation
 
-  @str = "string"
-  validate :str, :type, String
+  attr_accessor :number
+  attr_accessor :firma
 
-  @presence = ""
-	validate :presence, :presence
+  validate :number, :type, Fixnum
+  validate :number, :presence
+  validate :firma, :presence
 end
+
+car = Car.new
+car.number = 101
+car.firma = 'bmw'
+
+car.validate!
